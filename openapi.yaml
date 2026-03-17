@@ -1,34 +1,72 @@
-name: API CI/CD - Validate and Deploy
+openapi: 3.0.1
+info:
+  title: API Tienda de Ropa
+  description: Contrato de interfaz para el catálogo de productos y gestión de ventas.
+  version: 1.1.0
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
 
-on:
-  push:
-    branches: [main]
+servers:
+  - url: https://api.mitienda.com/v1
+    description: Servidor de Pruebas
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+security:
+  - ApiKeyAuth: []
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout del código
-        uses: actions/checkout@v3
+paths:
+  /products:
+    get:
+      operationId: getProducts
+      summary: Consultar catálogo de ropa
+      description: Permite filtrar productos por categoría y precio.
+      parameters:
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [hombre, mujer, ninos]
+      responses:
+        '200':
+          description: Lista de productos obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Solicitud incorrecta
 
-      - name: Instalar Redocly
-        run: npm install -g @redocly/cli
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
 
-      - name: Validar YAML (CI)
-        run: redocly lint openapi.yaml
-
-      - name: Generar Página HTML (Build)
-        run: redocly build-docs openapi.yaml -o index.html
-
-      - name: Subir a GitHub Pages (CD)
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: '.'
-
-      - name: Desplegar Documentación
-        uses: actions/deploy-pages@v2
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: string
+          example: "SKU-10020"
+        name:
+          type: string
+          example: "Camisa Oxford Azul"
+        brand:
+          type: string
+          example: "Levis"
+        price:
+          type: number
+          format: float
+          example: 850.50
+        status:
+          type: string
+          example: "disponible"
