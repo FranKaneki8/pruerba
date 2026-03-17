@@ -21,7 +21,7 @@ jobs:
 
       - name: Validar y Generar HTML
         run: |
-          redocly lint openapi.yaml
+          redocly lint banco-api.yaml
           redocly build-docs openapi.yaml -o index.html
 
       - name: Subir a GitHub Pages
