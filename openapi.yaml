@@ -1,74 +1,109 @@
 openapi: 3.0.1
 info:
-  title: API Tienda de Ropa
-  description: Contrato de interfaz para el catálogo de productos y gestión de ventas.
-  version: 1.1.0
-  license:
-    name: Apache 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: API Banco Digital Pro
+  description: |
+    Interfaz para la gestión de servicios financieros avanzados. 
+    Permite la consulta de estados de cuenta y ejecución de transferencias interbancarias.
+  version: 2.0.0
+  contact:
+    name: Soporte Técnico Bancario
+    email: api-support@mibanco.com
   x-logo:
     url: 'https://redocly.github.io/redoc/docs/logo.png'
 
 servers:
-  - url: https://api.mitienda.com/v1
-    description: Servidor de Pruebas
+  - url: https://api.mibanco.com/v2
+    description: Servidor de Producción (Seguro)
 
 security:
-  - ApiKeyAuth: []
+  - BearerAuth: []
 
 paths:
-  /products:
+  /accounts/{accountId}:
     get:
-      operationId: getProducts
-      summary: Consultar catálogo de ropa
-      description: Permite filtrar productos por categoría y precio.
+      summary: Consultar detalle de cuenta
+      operationId: getAccountDetails
       parameters:
-        - name: category
-          in: query
-          required: false
+        - name: accountId
+          in: path
+          required: true
+          description: Número de cuenta único (IBAN)
           schema:
             type: string
-            enum: [hombre, mujer, ninos]
+            example: "ES1234567890"
       responses:
         '200':
-          description: Lista de productos obtenida con éxito
+          description: Detalles de la cuenta obtenidos
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Product'
-        '400':
-          description: Solicitud incorrecta
+                $ref: '#/components/schemas/Account'
+        '401':
+          description: Token inválido o expirado
+
+  /transfers:
+    post:
+      summary: Ejecutar nueva transferencia
+      operationId: createTransfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '201':
+          description: Transferencia procesada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionId:
+                    type: string
+                    example: "TRX-998877"
+                  status:
+                    type: string
+                    example: "completed"
+        '403':
+          description: Fondos insuficientes
 
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-KEY
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   schemas:
-    Product:
+    Account:
       type: object
-      required:
-        - id
-        - name
-        - price
       properties:
         id:
           type: string
-          example: "SKU-10020"
-        name:
+        owner:
           type: string
-          example: "Camisa Oxford Azul"
-        brand:
-          type: string
-          example: "Levis"
-        price:
+          example: "Franklin Velasquez"
+        balance:
           type: number
-          format: float
-          example: 850.50
-        status:
+          format: double
+          example: 25500.75
+        currency:
           type: string
-          example: "disponible"
+          example: "USD"
+
+    TransferRequest:
+      type: object
+      required:
+        - destinationAccount
+        - amount
+      properties:
+        destinationAccount:
+          type: string
+          example: "ES0987654321"
+        amount:
+          type: number
+          example: 150.00
+        concept:
+          type: string
+          example: "Pago de servicios"
