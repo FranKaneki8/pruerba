@@ -1,0 +1,17 @@
+name: API CI Check
+
+on: [push]
+
+jobs:
+  lint:
+    name: Validar Sintaxis OpenAPI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Instalar validador (Redocly)
+        run: npm install -g @redocly/cli
+
+      - name: Ejecutar Linting (Revisión)
+        run: redocly lint openapi.yaml
