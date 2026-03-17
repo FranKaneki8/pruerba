@@ -1,6 +1,3 @@
-info:
-  x-logo:
-    url: 'https://redocly.github.io/redoc/docs/logo.png' # Aquí puedes poner el link al logo de tu tienda
 openapi: 3.0.1
 info:
   title: API Tienda de Ropa
@@ -9,6 +6,8 @@ info:
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
+  x-logo:
+    url: 'https://redocly.github.io/redoc/docs/logo.png'
 
 servers:
   - url: https://api.mitienda.com/v1
