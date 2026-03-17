@@ -11,6 +11,7 @@ servers:
 paths:
   /products:
     get:
+      operationId: getProducts  # <--- Agregamos esto (DNI de la función)
       summary: Consultar catálogo de ropa
       description: Permite filtrar productos por categoría y precio.
       parameters:
@@ -30,6 +31,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+        '400':  # <--- Agregamos este bloque para cumplir la regla 4XX
+          description: Solicitud incorrecta (Parámetros inválidos)
 
 components:
   schemas:
