@@ -1,3 +1,6 @@
+info:
+  x-logo:
+    url: 'https://redocly.github.io/redoc/docs/logo.png' # Aquí puedes poner el link al logo de tu tienda
 openapi: 3.0.1
 info:
   title: API Tienda de Ropa
