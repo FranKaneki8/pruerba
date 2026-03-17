@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar Redocly
         run: npm install -g @redocly/cli
@@ -26,9 +26,9 @@ jobs:
         run: redocly build-docs openapi.yaml -o index.html
 
       - name: Subir a GitHub Pages (CD)
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
       - name: Desplegar Documentación
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
