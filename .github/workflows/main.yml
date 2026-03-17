@@ -22,7 +22,7 @@ jobs:
       - name: Validar y Generar HTML
         run: |
           redocly lint banco-api.yaml
-          redocly build-docs openapi.yaml -o index.html
+          redocly build-docs banco-api.yaml -o index.html
 
       - name: Subir a GitHub Pages
         uses: actions/upload-pages-artifact@v3
