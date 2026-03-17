@@ -1,17 +1,34 @@
-name: API CI Check
+name: API CI/CD - Validate and Deploy
 
-on: [push]
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  lint:
-    name: Validar Sintaxis OpenAPI
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout del código
         uses: actions/checkout@v3
 
-      - name: Instalar validador (Redocly)
+      - name: Instalar Redocly
         run: npm install -g @redocly/cli
 
-      - name: Ejecutar Linting (Revisión)
+      - name: Validar YAML (CI)
         run: redocly lint openapi.yaml
+
+      - name: Generar Página HTML (Build)
+        run: redocly build-docs openapi.yaml -o index.html
+
+      - name: Subir a GitHub Pages (CD)
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: '.'
+
+      - name: Desplegar Documentación
+        uses: actions/deploy-pages@v2
